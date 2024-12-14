@@ -75,9 +75,9 @@ const MovieList: React.FC= () => {
                   placeholder="Search..."
                   className='w-full h-12 px-4 border rounded-md'
                   onChange={handleSearchChange}/>
-          {search !== "" ? <Link href={`/?page=${currentPage}&search=${search}`}>
+          <Link href={search !== "" ?`/?page=${currentPage}&search=${search}`:`/?page=${currentPage}`}>
             <button type="submit" className="hidden"></button>
-          </Link>:  <Link href={`/?page=${currentPage}`}><button type="submit" className="hidden"></button></Link>}
+          </Link>
           </form>
       </div>
       <ul className="grid grid-cols-[repeat(auto-fill,_minmax(400px,_1fr))] gap-x-4 gap-y-6 mb-6">
@@ -103,7 +103,7 @@ const MovieList: React.FC= () => {
       <Pagination 
         currentPage={currentPage}
         totalPages={TotalPages}
-        postsPerPage={postsPerPage} 
+        postsPerPage={postsPerPage}
         PreviousPageClick={handlePrevPage}
         NextPageClick={handleNextPage}
         currentPageClick={handleCurrentPage}/>
