@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
 import SearchBar from "../SearchBar/SearchBar";
@@ -36,41 +35,6 @@ const MovieList: React.FC<{ currentPageNumber?: number, searchQuery?: string}> =
 }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
-  // const fetchMovies = async () => {
-  //   await axios
-  //     .get(
-  //       `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.NEXT_PUBLIC_API_KEY}&language=en-US&page=${currentPageNumber}`
-  //     )
-  //     .then((response) => {
-  //       const data: APIResponse = response.data;
-  //       setMovies(data.results);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching data:", error);
-  //     });
-  // };
-
-  // const fetchSearch = async (search: string) => {
-  //   await axios
-  //     .get(
-  //       `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_API_KEY}&query=${search}&language=en-US`
-  //     )
-  //     .then((response) => {
-  //       const data: APIResponse = response.data;
-  //       setMovies(data.results);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching data:", error);
-  //     });;
-  // };
-
-  // useEffect(() => {
-  //   if (searchQuery)
-  //     fetchSearch(searchQuery);
-  //   else
-  //     fetchMovies();
-  // }, [currentPageNumber, searchQuery]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
