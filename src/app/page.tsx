@@ -1,19 +1,20 @@
 "use client"
-import MovieList from '@/MovieList/MovieList';
-import Header from '../Header/Header'
-
+import { useRouter } from "next/navigation";
+import { useEffect } from 'react';
+import Image from "next/image";
 
 export default function Home() {
-
+  const router = useRouter()
+  useEffect(() => router.push('/page/1'), [router]);  
   return (
     <>
-      <Header />
-      <MovieList />
-      <footer className="bg-blue-900 text-white py-4">
-        <div className="container mx-auto text-center">
-          <p>2024 Mohamad Abbas © All rights reserved.</p>
-        </div>
-      </footer>
+      <div className="h-[calc(100vh-80px-56px)] flex justify-center items-center flex-col">
+        <Image src="/images/ZKZg.gif"
+          alt="Loading"
+          width={30}
+          height={30}/>
+        <p>loading ...</p>
+      </div>
     </>
   );
 }

@@ -21,8 +21,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const ellipsis = "...";
   const showPages = (currentPage: number) => {
     const pagesToShow = [];
-    pagesToShow.push(1);
-    if (currentPage - 2 > 2) pagesToShow.push(ellipsis);
+    if (currentPage <= 2) pagesToShow.push(1);
     for (
       let i = Math.max(2, currentPage - 1);
       i <= Math.min(totalPages - 1, currentPage + 1);
@@ -39,16 +38,30 @@ const Pagination: React.FC<PaginationProps> = ({
   const paginationNumbersWithEllipsis = showPages(currentPage);
 
   const buttonStyle: string =
-    "mx-2 bg-blue-900 px-4 py-2 rounded-md \
-	text-white text-base hover:bg-blue-800 ";
+    "h-fit mx-2 px-4 py-2 rounded-md text-white text-base hover:bg-blue-800 max-md:px-2 max-md:py-1";
+
+  const staticButton = (pageNumber: string | number, index?: number) => {
+    return (
+      <button
+            className={`${buttonStyle} ${pageNumber === currentPage ? "bg-blue-500" : "bg-blue-900"}`}
+            onClick={() =>
+              pageNumber !== ellipsis && currentPageClick(pageNumber as number)
+            }
+            disabled={pageNumber === ellipsis}
+            key={index}
+          >
+            {pageNumber}
+          </button>
+    )
+  }
 
   return (
     <div className="flex justify-center full">
       {currentPage > 1 && (
-        <Link href={`/?page=${currentPage - 1}`}>
+        <Link href={`/page/${currentPage - 1}`}>
           <button
             onClick={PreviousPageClick}
-            className={buttonStyle}
+            className={`${buttonStyle} bg-blue-900`}
             disabled={currentPage === 1}
           >
             Prev
@@ -56,24 +69,16 @@ const Pagination: React.FC<PaginationProps> = ({
         </Link>
       )}
       {paginationNumbersWithEllipsis.map((pageNumber, index) => (
-		<Link href={`/?page=${pageNumber}`} key={index}>
-			<button
-			key={index}
-			className={buttonStyle}
-			onClick={() =>
-				pageNumber !== ellipsis && currentPageClick(pageNumber as number)
-			}
-			disabled={pageNumber === ellipsis}
-			>
-			{pageNumber}
-			</button>
-		</Link>
+        pageNumber === ellipsis ? staticButton(pageNumber, index) : 
+        <Link href={`/page/${pageNumber}`} key={index}>
+          {staticButton(pageNumber)}
+        </Link>
       ))}
       {currentPage < totalPages && (
-        <Link href={`/?page=${currentPage + 1}`}>
+        <Link href={`/page/${currentPage + 1}`}>
           <button
             onClick={NextPageClick}
-            className={buttonStyle}
+            className={`${buttonStyle} bg-blue-900`}
             disabled={currentPage === totalPages}
           >
             Next

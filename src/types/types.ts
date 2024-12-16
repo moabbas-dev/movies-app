@@ -6,7 +6,7 @@ interface Movie {
 	release_date: string;
 }
   
-  interface APIResponse {
+interface APIResponse {
 	page: number;
 	results: Movie[];
 	total_pages: number;
