@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 
 const Page = () => {
   const TotalPages = 12;
-  // to access dynamic routing (page/[page]) 
+  // to access dynamic routing (page/[page])
   const { page } = useParams<{page: string}>();
   const router = useRouter();
 
@@ -14,10 +14,9 @@ const Page = () => {
   if (pageNumber > TotalPages)
   {
     pageNumber = 1;
-    useEffect(() => router.push('/page/1'), [router]);
+    useEffect(() => router.replace('/page/1'), [router]);
   }
   const [currentPage, setCurrentPage] = useState<number>(pageNumber);
-  const postsPerPage = 20;
 
   const handlePrevPage = () => {
     if (currentPage === 1) return;
@@ -38,16 +37,18 @@ const Page = () => {
     router.replace(`/page/${page}`);
   };
 
+  const generateLink = (page: number) => `/page/${page}`
+
   return (
     <div className="flex flex-col mb-4">
       <MovieList currentPageNumber={currentPage} />
       <Pagination
         currentPage={currentPage}
         totalPages={TotalPages}
-        postsPerPage={postsPerPage}
         PreviousPageClick={handlePrevPage}
         NextPageClick={handleNextPage}
         currentPageClick={handleCurrentPage}
+        link={generateLink}
       />
     </div>
   );
