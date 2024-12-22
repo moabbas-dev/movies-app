@@ -1,13 +1,10 @@
-"use client";
-import Link from "next/link";
-
+"use client"
 interface PaginationProps {
   PreviousPageClick: () => void;
   NextPageClick: () => void;
   currentPageClick: (page: number) => void;
   totalPages: number;
   currentPage: number;
-  link: (page: number) => string;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -16,15 +13,16 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPageClick,
   totalPages,
   currentPage,
-  link,
 }) => {
   const ellipsis = "...";
 
   const showPages = (currentPage: number, totalPages: number) => {
     const pagesToShow: (number | string)[] = [];
 
-    if (currentPage !== 1) pagesToShow.push(1);
-    if (currentPage > 3) pagesToShow.push(ellipsis);
+    if (currentPage !== 1)
+      pagesToShow.push(1);
+    if (currentPage > 3)
+      pagesToShow.push(ellipsis);
 
     if (currentPage === totalPages)
       pagesToShow.push(currentPage - 2);
@@ -72,7 +70,6 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <div className="flex justify-center full">
       {currentPage > 1 && (
-        <Link href={link(currentPage - 1)}>
           <button
             onClick={PreviousPageClick}
             className={`${buttonStyle} bg-blue-900`}
@@ -80,19 +77,11 @@ const Pagination: React.FC<PaginationProps> = ({
           >
             Prev
           </button>
-        </Link>
       )}
       {paginationNumbersWithEllipsis.map((pageNumber, index) =>
-        pageNumber === ellipsis ? (
-          staticButton(pageNumber, index)
-        ) : (
-          <Link href={link(Number(pageNumber))} key={index}>
-            {staticButton(pageNumber)}
-          </Link>
-        )
+        staticButton(pageNumber, index)
       )}
       {currentPage < totalPages && (
-        <Link href={link(currentPage + 1)}>
           <button
             onClick={NextPageClick}
             className={`${buttonStyle} bg-blue-900`}
@@ -100,7 +89,6 @@ const Pagination: React.FC<PaginationProps> = ({
           >
             Next
           </button>
-        </Link>
       )}
     </div>
   );

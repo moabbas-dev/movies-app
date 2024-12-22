@@ -1,60 +1,13 @@
-import { useState, useEffect } from "react";
+"use client";
+import { useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import SearchBar from "../SearchBar/SearchBar";
 import { TbFaceIdError } from "react-icons/tb";
 
-async function fetchMovies(page: number | undefined): Promise<APIResponse | null> {
-  try {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.NEXT_PUBLIC_API_KEY}&language=en-US&page=${page}`,
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
-
-async function fetchSearch(query: string, page: number | undefined): Promise<APIResponse | null> {
-  try {
-    const res = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_API_KEY}&query=${query}&language=en-US&page=${page}`,
-    );
-    return res.data
-  } catch(error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-}
-
-const MovieList: React.FC<{ currentPageNumber?: number, searchQuery?: string, onTotalPagesChange?: (totalPages: number) => void}> = ({
-  currentPageNumber, 
-  searchQuery, 
-  onTotalPagesChange, 
+const MovieList: React.FC<{movieList:Movie[]}> = ({
+  movieList
 }) => {
-  const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = searchQuery
-          ? await fetchSearch(searchQuery, currentPageNumber)
-          : await fetchMovies(currentPageNumber);
-          if (data) {
-            setMovies(data.results || []);
-            const totalPages = Math.ceil(data.total_results / 20);
-            searchQuery? onTotalPagesChange?.(totalPages) : null;
-          }
-      } catch (err) {
-        console.error(err);
-        setMovies([]);
-        onTotalPagesChange?.(0);
-      }
-    };
-    fetchData();
-  }, [currentPageNumber, searchQuery]);
 
   const handlePopupToggle = (movieId: number) => {
     if (selectedMovieId === movieId) setSelectedMovieId(null);
@@ -65,7 +18,7 @@ const MovieList: React.FC<{ currentPageNumber?: number, searchQuery?: string, on
     <div className="container mx-auto my-4 gap-y-4 flex flex-col max-lg:px-4">
       <SearchBar />
       <ul className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-x-4 gap-y-6 mb-6">
-        {movies.map((movie) => (
+        {movieList.map((movie) => (
           <li
             key={movie.id}
             className="bg-gray-300 rounded-lg p-2 shadow-xl"

@@ -1,52 +1,51 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import React from "react";
 import MovieList from "@/components/MovieList/MovieList";
-import Pagination from "@/components/Pagination/Pagination";
-import { useRouter } from "next/navigation";
+import ServerPagination from "@/components/ServerPagination/ServerPagination";
+import { redirect } from "next/navigation";
+import axios from "axios";
 
-const page = () => {
-  const { searchQuery } = useParams<{ searchQuery: string }>();
-  const search = searchQuery.toLocaleLowerCase();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get("page")) || 1);
-  const [totalPages, setTotalPages] = useState<number>(12);
-  const handlePrevPage = () => {
-    if (currentPage > 1) handleCurrentPage(currentPage - 1);
-  };
+async function fetchSearch(query: string, page: number | undefined): Promise<APIResponse | null> {
+  try {
+    const res = await axios.get(
+      `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_API_KEY}&query=${query}&language=en-US&page=${page}`,
+    );
+    return res.data
+  } catch(error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+}
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) handleCurrentPage(currentPage + 1);
-  };
+interface SearchProps {
+  params: {
+    searchQuery: string
+  },
+  searchParams: {
+    page?: string;
+  }
+}
 
-  const handleCurrentPage = (newPage: number) => {
-    setCurrentPage(newPage);
-	router.replace(`/search/${searchQuery}?page=${newPage}`);
-  };
+const page = async ({params, searchParams}: SearchProps) => {
+  const { searchQuery } = await params
+  const { page } = await searchParams
+  const query = searchQuery.toLocaleLowerCase();
+  const currentPage = parseInt(page || "1", 10);
+  const data = await fetchSearch(query, currentPage);
+  const movies = data? data.results : []
+  const totalPages = data?.total_pages || 1;
 
-  useEffect(() => {
-    const pageParam = Number(searchParams.get("page"));
-	if (currentPage === 0)
-		router.replace(`/search/${searchQuery}?page=1`);
-	else if (Number(pageParam) !== currentPage)
-		setCurrentPage(Number(pageParam));
-  }, [searchParams]);
+  if (!data || currentPage < 1)
+    redirect(`/search/${searchQuery}?page=1`);
 
-  const generateLink = (page: number) => `/search/${searchQuery}?page=${page}`;
   return (
     <div className="flex flex-col mb-4">
       <MovieList 
-	  	searchQuery={search}
-		currentPageNumber={currentPage}
-		onTotalPagesChange={setTotalPages}/>
-      <Pagination
-        PreviousPageClick={handlePrevPage}
-        currentPageClick={handleCurrentPage}
-        NextPageClick={handleNextPage}
+        movieList={movies}/>
+      <ServerPagination
         currentPage={currentPage === 0? 1 : currentPage}
         totalPages={totalPages}
-		link={generateLink}
+        pageComponent={false}
+        searchQuery={query}
       />
     </div>
   );
